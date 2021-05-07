@@ -749,6 +749,7 @@ class SimpleArmBlocks {
     }
 
     speak({ Text }) {
+        if (!Text) return;
         this._isSpeaking = true;
         return this.send("Speak", { Text }).then(
             (result) => {
@@ -764,6 +765,7 @@ class SimpleArmBlocks {
     }
 
     speakWait({ Text }) {
+        if (!Text) return;
         this._isSpeaking = true;
         return this.send("SpeakWait", { Text }, { timeout: 6000 })
             .finally(() => {
@@ -937,4 +939,4 @@ const simplearmExtension = {
         vm.extensionManager._loadedExtensions.set("simplearm", serviceName);
     },
 };
-export default simplearm;
+export default simplearmExtension;

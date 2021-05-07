@@ -6,6 +6,7 @@ import React from 'react';
 import InlineMessages from '../../containers/inline-messages.jsx';
 
 import {
+    // eslint-disable-next-line no-unused-vars
     manualUpdateProject
 } from '../../reducers/project-state';
 
@@ -51,8 +52,9 @@ const mapStateToProps = state => ({
     projectChanged: state.scratchGui.projectChanged
 });
 
+// eslint-disable-next-line no-unused-vars
 const mapDispatchToProps = dispatch => ({
-    onClickSave: () => dispatch(manualUpdateProject())
+    // onClickSave: () => dispatch(manualUpdateProject())
 });
 
 export default connect(

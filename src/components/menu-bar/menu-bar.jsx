@@ -35,6 +35,7 @@ import {
     autoUpdateProject,
     getIsUpdating,
     getIsShowingProject,
+    // eslint-disable-next-line no-unused-vars
     manualUpdateProject,
     requestNewProject,
     remixProject,
@@ -622,7 +623,7 @@ class MenuBar extends React.Component {
                 <div className={styles.accountInfoGroup}>
                     <div className={styles.menuBarItem}>
                         {this.props.canSave && (
-                            <SaveStatus />
+                            <SaveStatus onClickSave={this.props.onClickSave} />
                         )}
                     </div>
                     {this.props.sessionExists ? (
@@ -871,7 +872,7 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseAbout: () => dispatch(closeAboutMenu()),
     onClickNew: needSave => dispatch(requestNewProject(needSave)),
     onClickRemix: () => dispatch(remixProject()),
-    onClickSave: () => dispatch(manualUpdateProject()),
+    // onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
     onSeeCommunity: () => dispatch(setPlayer(true))
 });

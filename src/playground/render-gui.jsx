@@ -7,6 +7,8 @@ import GUI from '../containers/gui.jsx';
 import HashParserHOC from '../lib/hash-parser-hoc.jsx';
 import log from '../lib/log.js';
 
+import SimplearmHOC from '../simplearm/simplearmHOC.jsx';
+
 const onClickLogo = () => {
     window.location = 'https://scratch.mit.edu';
 };
@@ -36,7 +38,8 @@ export default appTarget => {
     // ability to compose reducers.
     const WrappedGui = compose(
         AppStateHOC,
-        HashParserHOC
+        HashParserHOC,
+        SimplearmHOC
     )(GUI);
 
     // TODO a hack for testing the backpack, allow backpack host to be set by url param
