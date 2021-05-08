@@ -53,7 +53,7 @@ const simplearmHOC = (WrappedComponent) => (props) => {
                     zip.file("thumbnail.png", convertDataURIToBinary(dataURI));
                     zip.generateAsync({
                         type: 'blob',
-                        mimeType: 'application/x.scratch.sb3',
+                        mimeType: 'application/x.scratch.sb3.simplearm',
                         compression: 'DEFLATE',
                         compressionOptions: { level: 6 }
                     }).then (file => {
@@ -73,6 +73,6 @@ const simplearmHOC = (WrappedComponent) => (props) => {
         });
     };
 
-    return (<WrappedComponent {...props} backpackVisible={false} showComingSoon={false} canSave={true} onVmInit={loadSimplearmExtention} simplearmSave={save} />);
+    return (<WrappedComponent {...props} backpackVisible={false} showComingSoon={false} canSave={true} onClickLogo={() =>{}} onVmInit={loadSimplearmExtention} simplearmSave={save} />);
 };
 export default simplearmHOC;
