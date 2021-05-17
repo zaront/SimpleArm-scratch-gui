@@ -119,6 +119,7 @@ const GUIComponent = props => {
         telemetryModalVisible,
         tipsLibraryVisible,
         vm,
+        onClickSave,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -236,8 +237,7 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onStartSelectingFileUpload={onStartSelectingFileUpload}
                     onToggleLoginOpen={onToggleLoginOpen}
-                    // eslint-disable-next-line react/jsx-handler-names
-                    onClickSave={componentProps.simplearmSave}
+                    onClickSave={onClickSave}
                 />
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
@@ -425,7 +425,8 @@ GUIComponent.propTypes = {
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    onClickSave: PropTypes.func
 };
 GUIComponent.defaultProps = {
     backpackHost: null,

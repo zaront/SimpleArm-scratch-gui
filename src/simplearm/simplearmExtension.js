@@ -6,11 +6,14 @@
 const ArgumentType = require("scratch-vm/src/extension-support/argument-type");
 const BlockType = require("scratch-vm/src/extension-support/block-type");
 const Color = require("scratch-vm/src/util/color");
+const Runtime = require("scratch-vm/src/engine/runtime");
 
 const blockIconURI =
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzguOTY0IiBoZWlnaHQ9IjM5LjQ5NSIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMTAuMzA5IDEwLjQ1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogPGcgdHJhbnNmb3JtPSJtYXRyaXgoLjM4MDM0IDAgMCAuMzg1NTIgLTU2LjA4NyAtOTYuNTk4KSI+CiAgPGNpcmNsZSBjeD0iMTYxLjAyIiBjeT0iMjY0LjEyIiByPSIxMy4yMDIiIGZpbGw9IiNmY2U5ZGIiIHN0cm9rZT0iIzAxMDAwMyIgc3Ryb2tlLXdpZHRoPSIuNyIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3LjY5NCAyNC45MDUpIj4KICAgPGcgc3Ryb2tlLXdpZHRoPSIwIj4KICAgIDxwYXRoIHRyYW5zZm9ybT0ibWF0cml4KC4yNjQ1OCAwIDAgLjI2NDU4IDIxLjYyNSA0MC44NTYpIiBkPSJtNDgwLjM3IDc0OS45My0wLjEwMTU2IDAuMjUxOTVhOC41MDE5IDguNTAxOSAwIDAgMSAwLjU2NjQxIDMuMDUwOCA4LjUwMTkgOC41MDE5IDAgMCAxLTQuOTIxOSA3LjcwMTJsLTAuMjIyNjUgMC41NTA3OCA1LjMwNDcgMi4xNDg0IDQuNjc5Ny0xMS41NTV6Ii8+CiAgICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCguMjY0NTggMCAwIC4yNjQ1OCAyMS42MjUgNDAuODU2KSIgZD0ibTQ2Ny44NCA3MzIuNDRhMTEuMTY2IDExLjE2NiAwIDAgMS04LjgwNjYgNC4zMjIzIDExLjE2NiAxMS4xNjYgMCAwIDEtMi41MjczLTAuMzAyNzNsNy40Njg4IDE1LjIwM2E4LjUwMTkgOC41MDE5IDAgMCAxIDguMzQ5Ni02LjkzMTYgOC41MDE5IDguNTAxOSAwIDAgMSAxLjYzNDggMC4xNjIxMXoiLz4KICAgIDxwYXRoIHRyYW5zZm9ybT0ibWF0cml4KC4yNjQ1OCAwIDAgLjI2NDU4IDIxLjYyNSA0MC44NTYpIiBkPSJtNDQ4LjU0IDcyOS4zNy0xNi45MDggMzQuNDE2IDEyLjg2OSA2LjMyNDIgMTYuNDY5LTMzLjUyMWExMS4xNjYgMTEuMTY2IDAgMCAxLTEuOTMzNiAwLjE2OTkyIDExLjE2NiAxMS4xNjYgMCAwIDEtMTAuNDk2LTcuMzg4N3oiLz4KICAgPC9nPgogICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCguMjY0NTggMCAwIC4yNjQ1OCAyMS42MjUgNDAuODU2KSIgZD0ibTQ1OS4wNCA3MTcuNzNhNy44NTcxIDcuODU3MSAwIDAgMC03Ljg1NzQgNy44NTc0IDcuODU3MSA3Ljg1NzEgMCAwIDAgNy44NTc0IDcuODU3NCA3Ljg1NzEgNy44NTcxIDAgMCAwIDcuODU3NC03Ljg1NzQgNy44NTcxIDcuODU3MSAwIDAgMC03Ljg1NzQtNy44NTc0em0wIDQuNjg1NWEzLjE3MTggMy4xNzE4IDAgMCAxIDMuMTcxOSAzLjE3MTkgMy4xNzE4IDMuMTcxOCAwIDAgMS0zLjE3MTkgMy4xNzE5IDMuMTcxOCAzLjE3MTggMCAwIDEtMy4xNzE5LTMuMTcxOSAzLjE3MTggMy4xNzE4IDAgMCAxIDMuMTcxOS0zLjE3MTl6IiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iLjc1NTkxIi8+CiAgIDxwYXRoIHRyYW5zZm9ybT0ibWF0cml4KC4yNjQ1OCAwIDAgLjI2NDU4IDIxLjYyNSA0MC44NTYpIiBkPSJtNDcyLjMzIDc0Ni45NmE2LjI3MzMgNi4yNzMzIDAgMCAwLTYuMjcxNSA2LjI3MzQgNi4yNzMzIDYuMjczMyAwIDAgMCA2LjI3MTUgNi4yNzM0IDYuMjczMyA2LjI3MzMgMCAwIDAgNi4yNzM0LTYuMjczNCA2LjI3MzMgNi4yNzMzIDAgMCAwLTYuMjczNC02LjI3MzR6bTAgMy43NDIyYTIuNTMyNCAyLjUzMjQgMCAwIDEgMi41MzMyIDIuNTMxMiAyLjUzMjQgMi41MzI0IDAgMCAxLTIuNTMzMiAyLjUzMzIgMi41MzI0IDIuNTMyNCAwIDAgMS0yLjUzMTItMi41MzMyIDIuNTMyNCAyLjUzMjQgMCAwIDEgMi41MzEyLTIuNTMxMnoiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIuNjAzNTMiLz4KICAgPGcgc3Ryb2tlLXdpZHRoPSIwIj4KICAgIDxyZWN0IHg9IjEzMy43NSIgeT0iMjQyLjk1IiB3aWR0aD0iNi42MTQ2IiBoZWlnaHQ9IjIuNTUxMyIvPgogICAgPHJlY3QgdHJhbnNmb3JtPSJtYXRyaXgoLjQ4MDEzIC0uODc3MiAuOTM3MjkgLjM0ODU0IDAgMCkiIHg9Ii0xNzUiIHk9IjI0OC42NSIgd2lkdGg9IjEuOTM2MiIgaGVpZ2h0PSIuOTA3MjkiIHJ5PSIwIi8+CiAgICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCguMjY0NTggMCAwIC4yNjQ1OCAyMS42MjUgNDAuODU2KSIgZD0ibTQ5OC42NCA3NDQuMzUtMTMuNTc0IDIuNTYyNSAwLjM3NSA0LjA5OTYgMi4xNDI2LTAuNDA0MyA4LjExNTItMi43MjQ2IDAuMzc1IDEuMTE5MSAyLjk0MTQtMC41NTQ2OXoiLz4KICAgIDxwYXRoIHRyYW5zZm9ybT0ibWF0cml4KC4yNjQ1OCAwIDAgLjI2NDU4IDIxLjYyNSA0MC44NTYpIiBkPSJtNDgzLjE4IDc1Ny45LTMuOTI5NyAwLjMxODM2IDIuMzA4NiAxNC45NjkgMy45MzE2LTAuMzE4MzYtMC41NDQ5Mi0zLjUyOTNoLTEuNTE5NXYtOS44NDU3eiIvPgogICA8L2c+CiAgPC9nPgogPC9nPgo8L3N2Zz4K";
 const apiUrl = "http://localhost:8080/simplearm/api/";
 const noRecordings = ["<NONE>"];
+const simplearmKey = "simplearm";
+const simplearmKeyPrefix = simplearmKey + "_";
 
 class SimpleArmBlocks {
     constructor(runtime) {
@@ -36,16 +39,93 @@ class SimpleArmBlocks {
         this._isListening = false;
         this._isConnected = false;
         this._recordingList = noRecordings;
+        this._prevBlocks = {};
+        this._blockInCodingArea = false;
+        this._addedBlock;
+        this._blocksRefreshing;
 
+        //connect to event
+        this._runtime.on(Runtime.PROJECT_CHANGED, () => {
+            //skip if in the middle of a refresh
+            if (this._blocksRefreshing)
+                return;
+
+            const oldBlocks = this._prevBlocks;
+            const newBlockContainer = this._runtime._editingTarget.blocks;
+            const runtime = this._runtime;
+            const newBlocks = newBlockContainer._blocks;
+            const oldKeys = Object.keys(oldBlocks);
+            const newKeys = Object.keys(newBlocks);
+
+            //was the added block placed in the coding area?
+            if (oldKeys.length === newKeys.length && this._blockInCodingArea && this._addedBlock)
+            {
+                this._blockInCodingArea = false;
+                const block = this._addedBlock;
+                this._addedBlock = undefined;
+
+                //is it a simplearm block?
+                if (block.opcode.startsWith(simplearmKeyPrefix)) {
+                    //are all parameters default values?
+                    const templateParams = runtime._blockInfo.find(i => i.id === simplearmKey).blocks.find(i => i.json.type === block.opcode).info.arguments;
+                    const params = Object.keys(block.inputs);
+                    for (const param of params) {
+                        if (this.getParameterValue(newBlockContainer, block, param) != templateParams[param].defaultValue) 
+                            return;
+                    }
+                    
+                    //set the parameters to match the robots current values
+                    setTimeout(() => this.autoSetParameters(block),50);
+                }
+            }
+
+            //was a single block added?
+            if (oldKeys.length + 1 === newKeys.length) {
+                const newKey = newKeys.filter(i => !oldKeys.includes(i));
+                if (newKey && newKey.length === 1) {
+                    const newBlock = newBlocks[newKey[0]];
+
+                    if (!newBlock.shadow) {
+                        if (newBlock.parent || !newBlock.topLevel) {
+                            this._addedBlock = undefined;
+                        } else {
+                            this._addedBlock = newBlock; //track the added block
+                        }
+                    }
+                }
+            }
+
+            //take a snapshot of its blocks
+            this._prevBlocks = {...newBlocks};
+        });
+        this._runtime.on(Runtime.TOOLBOX_EXTENSIONS_NEED_UPDATE,() => {
+            //take a snapshot of its blocks
+            this._prevBlocks = {...this._runtime._editingTarget.blocks._blocks};
+        });
+
+        this._runtime.on(Runtime.BLOCK_DRAG_END,() => {
+            //the next Project Changed event IS NOT creating a new block
+            this._blockInCodingArea = false;
+        });
+
+        this._runtime.on(Runtime.BLOCK_DRAG_UPDATE,(outsideWorkspace) => {
+            //the next Project Changed event may be creating a new block
+            this._blockInCodingArea = !outsideWorkspace;
+        });
+
+        //start listening to robot arm
         this.listenForEvents();
     }
 
     getInfo() {
         return {
-            id: "simplearm",
+            id: simplearmKey,
             name: "SimpleArm",
             docsURI: "https://simplearm.com",
             blockIconURI: blockIconURI,
+            color1: "#8e8e8e",
+            color2: "#797979",
+            color3: "#494949",
             blocks: [
                 {
                     opcode: "playback",
@@ -85,7 +165,7 @@ class SimpleArmBlocks {
                     arguments: {
                         X: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 0,
+                            defaultValue: 0
                         },
                         Y: {
                             type: ArgumentType.NUMBER,
@@ -131,20 +211,15 @@ class SimpleArmBlocks {
                     text: "move [ServoID] to position [Position]",
                     arguments: {
                         ServoID: {
-                            type: ArgumentType.NUMBER,
+                            type: ArgumentType.STRING,
                             menu: "servoList",
-                            defaultValue: 5,
+                            defaultValue: "gripper",
                         },
                         Position: {
                             type: ArgumentType.ANGLE,
                             defaultValue: 0,
                         },
                     },
-                },
-                {
-                    opcode: "moveWait",
-                    blockType: BlockType.COMMAND,
-                    text: "wait until done",
                 },
                 {
                     opcode: "moveSettings",
@@ -166,10 +241,15 @@ class SimpleArmBlocks {
                         },
                         Sync: {
                             type: ArgumentType.STRING,
-                            defaultValue: "false",
+                            defaultValue: "unsynchronized",
                             menu: "syncronizedList",
                         },
                     },
+                },
+                {
+                    opcode: "moveWait",
+                    blockType: BlockType.COMMAND,
+                    text: "wait until done moving",
                 },
                 {
                     opcode: "isMoving",
@@ -182,9 +262,9 @@ class SimpleArmBlocks {
                     text: "position [ServoID] at [Position]",
                     arguments: {
                         ServoID: {
-                            type: ArgumentType.NUMBER,
+                            type: ArgumentType.STRING,
                             menu: "servoList",
-                            defaultValue: 5,
+                            defaultValue: "gripper",
                         },
                         Position: {
                             type: ArgumentType.ANGLE,
@@ -208,9 +288,9 @@ class SimpleArmBlocks {
                     text: "servo [ServoID] off",
                     arguments: {
                         ServoID: {
-                            type: ArgumentType.NUMBER,
+                            type: ArgumentType.STRING,
                             menu: "servoList",
-                            defaultValue: 5,
+                            defaultValue: "gripper",
                         },
                     },
                 },
@@ -388,7 +468,7 @@ class SimpleArmBlocks {
                     arguments: {
                         Male: {
                             type: ArgumentType.STRING,
-                            defaultValue: "true",
+                            defaultValue: "male",
                             menu: "genderList",
                         },
                     },
@@ -458,7 +538,7 @@ class SimpleArmBlocks {
                     arguments: {
                         Connection: {
                             type: ArgumentType.STRING,
-                            defaultValue: "1",
+                            defaultValue: "connected",
                             menu: "connectionList",
                         },
                     },
@@ -470,23 +550,23 @@ class SimpleArmBlocks {
                     items: "getRecordingList",
                 },
                 servoList: [
-                    { text: "shoulder", value: 1 },
-                    { text: "upper arm", value: 2 },
-                    { text: "forearm", value: 3 },
-                    { text: "hand", value: 4 },
-                    { text: "gripper", value: 5 },
+                    "shoulder", 
+                    "upper arm",
+                    "forearm",
+                    "hand",
+                    "gripper",
                 ],
                 syncronizedList: [
-                    { text: "synchronized", value: "true" },
-                    { text: "unsynchronized", value: "false" },
+                    "synchronized",
+                    "unsynchronized",
                 ],
                 genderList: [
-                    { text: "male", value: "true" },
-                    { text: "female", value: "false" },
+                    "male",
+                    "female",
                 ],
                 connectionList: [
-                    { text: "connected", value: "1" },
-                    { text: "disconnected", value: "0" },
+                    "connected",
+                    "disconnected",
                 ],
             },
         };
@@ -545,8 +625,8 @@ class SimpleArmBlocks {
         );
     }
 
-    getServoID(servoName) {
-        switch (servoName) {
+    getServoID(name) {
+        switch (name) {
             case "shoulder":
                 return 1;
             case "upper arm":
@@ -559,6 +639,90 @@ class SimpleArmBlocks {
                 return 5;
             default:
                 return 1;
+        }
+    }
+
+    getSyncronizedValue(name) {
+        switch (name) {
+            case "synchronized":
+                return "true";
+            case "unsynchronized":
+                return "false";
+            default:
+                return "false";
+        }
+    }
+
+    getGenderValue(name) {
+        switch (name) {
+            case "male":
+                return "true";
+            case "female":
+                return "false";
+            default:
+                return "true";
+        }
+    }
+
+    getConnectionValue(name) {
+        switch (name) {
+            case "connected":
+                return true;
+            case "disconnected":
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    autoSetParameters(block) {
+        const blockContainer = this._runtime._editingTarget.blocks;
+
+        let updated = true;
+        switch (block.opcode.replace(simplearmKeyPrefix,"")) {
+            case "servoMoveTarget":
+                if (this.xPos() != 0 || this.yPos() != 0 || this.zPos() != 0) {
+                    this.setParameterValue(blockContainer, block, "X", this.xPos());
+                    this.setParameterValue(blockContainer, block, "Y", this.yPos());
+                    this.setParameterValue(blockContainer, block, "Z", this.zPos());
+                }
+                break;
+            case "servoMoveAll":
+                this.setParameterValue(blockContainer, block, "Servo1Pos", this.shoulderPos());
+                this.setParameterValue(blockContainer, block, "Servo2Pos", this.upperArmPos());
+                this.setParameterValue(blockContainer, block, "Servo3Pos", this.forearmPos());
+                this.setParameterValue(blockContainer, block, "Servo4Pos", this.handPos());
+                this.setParameterValue(blockContainer, block, "Servo5Pos", this.gripperPos());
+                break;
+            case "whenHeard":
+                if (this.lastHeard()){
+                    this.setParameterValue(blockContainer, block, "Choice", this.lastHeard());
+                }
+                break;
+            default:
+                updated = false;
+                break;
+        }
+
+        //refresh the block in the UI
+        if (updated) {
+            this._blocksRefreshing = true;
+            this._runtime.requestBlocksUpdate();
+            setTimeout(() => this._blocksRefreshing = false,400);
+        }
+    }
+
+    getParameterValue(blockContainer, block, param) {
+        const paramBlock = blockContainer.getBlock(block.inputs[param].shadow);
+        if (paramBlock) {
+            return paramBlock.fields[Object.keys(paramBlock.fields)[0]].value;
+        }
+    }
+
+    setParameterValue(blockContainer, block, param, value) {
+        const paramBlock = blockContainer.getBlock(block.inputs[param].shadow);
+        if (paramBlock) {
+            paramBlock.fields[Object.keys(paramBlock.fields)[0]].value = value;
         }
     }
 
@@ -609,14 +773,14 @@ class SimpleArmBlocks {
 
     servoPosition({ ServoID, Position }) {
         this.send("ServoPosition", {
-            ServoID,
+            ServoID: this.getServoID(ServoID),
             Position,
         });
     }
 
     servoMove({ ServoID, Position }) {
         this.send("ServoMove", {
-            ServoID,
+            ServoID: this.getServoID(ServoID),
             Position,
         });
     }
@@ -640,12 +804,12 @@ class SimpleArmBlocks {
             Speed,
             EaseIn,
             EaseOut,
-            Sync,
+            Sync: this.getSyncronizedValue(Sync),
         });
     }
 
     servoOff({ ServoID }) {
-        this.send("ServoOff", { ServoID });
+        this.send("ServoOff", { ServoID: this.getServoID(ServoID) });
     }
 
     moveWait() {
@@ -784,7 +948,7 @@ class SimpleArmBlocks {
     }
 
     changeVoice({ Male }) {
-        this.send("ChangeVoice", { Male });
+        this.send("ChangeVoice", { Male: this.getGenderValue(Male) });
         this._isSpeaking = false;
     }
 
@@ -841,7 +1005,7 @@ class SimpleArmBlocks {
     }
 
     whenConnected({ Connection }) {
-        return this._isConnected == Connection;
+        return this._isConnected == this.getConnectionValue(Connection);
     }
 
     listenForEvents() {
@@ -936,7 +1100,7 @@ const simplearmExtension = {
         var serviceName = vm.extensionManager._registerInternalExtension(
             extension
         );
-        vm.extensionManager._loadedExtensions.set("simplearm", serviceName);
+        vm.extensionManager._loadedExtensions.set(simplearmKey, serviceName);
     },
 };
 export default simplearmExtension;

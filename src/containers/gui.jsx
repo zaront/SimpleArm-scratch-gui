@@ -40,6 +40,8 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
+import SimplearmHOC from '../simplearm/simplearmHOC.jsx';
+
 class GUI extends React.Component {
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
@@ -183,7 +185,8 @@ const WrappedGui = compose(
     vmListenerHOC,
     vmManagerHOC,
     SBFileUploaderHOC,
-    cloudManagerHOC
+    cloudManagerHOC,
+    SimplearmHOC
 )(ConnectedGUI);
 
 WrappedGui.setAppElement = ReactModal.setAppElement;
