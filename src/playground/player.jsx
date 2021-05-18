@@ -21,7 +21,7 @@ import styles from './player.css';
 
 const Player = ({isPlayerOnly, onSeeInside, projectId}) => (
     <Box className={classNames(isPlayerOnly ? styles.stageOnly : styles.editor)}>
-        {isPlayerOnly && <button onClick={onSeeInside}>{'See inside'}</button>}
+        {/* isPlayerOnly && <button onClick={onSeeInside}>{'See inside'}</button>*/}
         <GUI
             canEditTitle
             enableCommunity
@@ -61,4 +61,5 @@ const WrappedPlayer = compose(
 const appTarget = document.createElement('div');
 document.body.appendChild(appTarget);
 
-ReactDOM.render(<WrappedPlayer isPlayerOnly />, appTarget);
+// eslint-disable-next-line react/jsx-max-props-per-line
+ReactDOM.render(<WrappedPlayer isPlayerOnly isFullScreen />, appTarget);

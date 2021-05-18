@@ -149,7 +149,7 @@ const simplearmHOC = (WrappedComponent) => (props) => {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        zIndex: 1000,
+                        zIndex: 10000,
                         width: 50,
                         height: 50,
                         backgroundColor: "transparent",

@@ -79,6 +79,7 @@ const StageHeaderComponent = function (props) {
                 </a>
             </div>
         ) : (
+            (!isPlayerOnly &&
             <Button
                 className={styles.stageButton}
                 onClick={onSetStageUnFull}
@@ -92,6 +93,7 @@ const StageHeaderComponent = function (props) {
                     title={props.intl.formatMessage(messages.fullscreenControl)}
                 />
             </Button>
+            )
         );
         header = (
             <Box className={styles.stageHeaderWrapperOverlay}>
