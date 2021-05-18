@@ -30,6 +30,12 @@ const simplearmHOC = (WrappedComponent) => (props) => {
                 setProjectID(loadInfo.projectID);
                 dispatch(setProjectTitle(loadInfo.projectName));
                 setLoadInfo(undefined);
+
+                //auto start
+                if (props.isPlayerOnly) {
+                    vm.start();
+                }
+
                 return;
             }
 
