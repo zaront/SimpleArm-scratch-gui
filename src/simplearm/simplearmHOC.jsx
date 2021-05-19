@@ -81,7 +81,8 @@ const simplearmHOC = (WrappedComponent) => (props) => {
         if (element) {
             const docRect = document.body.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
-            return JSON.stringify(elementRect);
+            if (elementRect.left >= docRect.left && elementRect.top >= docRect.top && elementRect.bottom <= docRect.bottom && elementRect.right <= docRect.right)
+                return JSON.stringify(elementRect);
         }
     },[]);
 
