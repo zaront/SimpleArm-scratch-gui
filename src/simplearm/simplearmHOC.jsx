@@ -79,9 +79,8 @@ const simplearmHOC = (WrappedComponent) => (props) => {
         else
             element = document.querySelector(selector);
         if (element) {
-            const docRect = document.body.getBoundingClientRect();
             const elementRect = element.getBoundingClientRect();
-            if (elementRect.left >= docRect.left && elementRect.top >= docRect.top && elementRect.bottom <= docRect.bottom && elementRect.right <= docRect.right)
+            if (elementRect.left >= 0 && elementRect.top >= 0 && elementRect.bottom <= window.innerHeight && elementRect.right <= window.innerWidth)
                 return JSON.stringify(elementRect);
         }
     },[]);
@@ -154,7 +153,7 @@ const simplearmHOC = (WrappedComponent) => (props) => {
                     onClick={startLoad}
                     style={{
                         position: "absolute",
-                        top: 0,
+                        top: 50,
                         left: 0,
                         zIndex: 10000,
                         width: 50,
