@@ -617,7 +617,7 @@ class SimpleArmBlocks {
     refreshRecordingList() {
         this.send("GetRecordings").then(
             (result) => {
-                this._recordingList = result;
+                this._recordingList = (result && result?.length) ? result : noRecordings;
             },
             () => {
                 this._recordingList = noRecordings;
